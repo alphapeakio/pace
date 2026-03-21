@@ -1,0 +1,9 @@
+{
+  "name": "400m-pace-lab",
+  "version": "1.0.0",
+  "description": "Professional 400m split times database & pacing calculator",
+  "scripts": {
+    "dev": "npx serve public"
+  },
+  "license": "MIT"
+}
