@@ -36,25 +36,6 @@
 
 <div class="container video-lab-wrap">
 
-  <div class="vl-player-sticky" id="vl-player-block" hidden>
-    <div class="vl-video-wrap">
-      <video id="vl-video" controls playsinline tabindex="0" class="vl-video"></video>
-    </div>
-    <div class="vl-clock" id="vl-race-clock">—</div>
-    <p class="vl-copy vl-hint" id="vl-clock-hint">Race clock = current video time minus gun. With the video focused, ← → adjusts 0.05s (hold Shift: 0.5s).</p>
-    <div class="vl-missed-option">
-      <label class="vl-missed-check-label">
-        <input type="checkbox" id="vl-missed-enable" class="vl-missed-enable">
-        Recording started late (shift race clock)
-      </label>
-      <div class="vl-missed-details" id="vl-missed-details" hidden>
-        <p class="vl-copy vl-missed-expl">Enter seconds of race already gone at the frame you use as “gun.” Splits from your marks stay the same; only the clock shifts.</p>
-        <label class="vl-label" for="vl-missed-head">Seconds already elapsed at gun frame</label>
-        <input type="number" id="vl-missed-head" class="vl-input vl-missed-input" min="0" step="0.05" value="0" title="Seconds of race already elapsed at your gun frame">
-      </div>
-    </div>
-  </div>
-
   <section class="vl-panel" data-vl-step="upload">
     <h2 class="vl-h2">1. Race video</h2>
     <div class="vl-upload-zone" id="vl-upload-zone" role="button" tabindex="0" aria-label="Add video file">
@@ -92,45 +73,71 @@
     </div>
   </section>
 
-  <section class="vl-panel" data-vl-step="gun" hidden>
-    <h2 class="vl-h2">3. Gun time</h2>
-    <p id="vl-step-hint" class="vl-copy">Scrub to the start signal, pause, then set gun time.</p>
-    <div class="vl-nav-row">
-      <button type="button" class="vl-btn-ghost" id="vl-btn-gun-back">Back</button>
-      <button type="button" class="vl-btn-primary" id="vl-btn-set-gun">Set gun at current time</button>
+  <div class="vl-workbench" id="vl-workbench" hidden>
+    <div class="vl-workbench__media">
+      <div class="vl-video-shell">
+        <div class="vl-video-wrap">
+          <video id="vl-video" controls playsinline tabindex="0" class="vl-video"></video>
+        </div>
+        <div class="vl-race-meta">
+          <div class="vl-clock" id="vl-race-clock">—</div>
+          <p class="vl-copy vl-hint vl-hint--race" id="vl-clock-hint">Race clock = current video time minus gun. With the video focused, ← → adjusts 0.05s (hold Shift: 0.5s).</p>
+        </div>
+        <div class="vl-missed-option">
+          <label class="vl-missed-check-label">
+            <input type="checkbox" id="vl-missed-enable" class="vl-missed-enable">
+            Recording started late (shift race clock)
+          </label>
+          <div class="vl-missed-details" id="vl-missed-details" hidden>
+            <p class="vl-copy vl-missed-expl">Enter seconds of race already gone at the frame you use as “gun.” Splits from your marks stay the same; only the clock shifts.</p>
+            <label class="vl-label" for="vl-missed-head">Seconds already elapsed at gun frame</label>
+            <input type="number" id="vl-missed-head" class="vl-input vl-missed-input" min="0" step="0.05" value="0" title="Seconds of race already elapsed at your gun frame">
+          </div>
+        </div>
+      </div>
     </div>
-  </section>
+    <div class="vl-workbench__panel">
+      <section class="vl-panel vl-panel--dock" data-vl-step="gun" hidden>
+        <h2 class="vl-h2">3. Gun time</h2>
+        <p id="vl-step-hint" class="vl-copy">Scrub to the start signal, pause, then set gun time.</p>
+        <div class="vl-nav-row vl-nav-row--pair">
+          <button type="button" class="vl-btn-ghost" id="vl-btn-gun-back">Back</button>
+          <button type="button" class="vl-btn-primary" id="vl-btn-set-gun" title="Uses the current video time as gun" aria-label="Set gun at current video time">Set gun</button>
+        </div>
+      </section>
 
-  <section class="vl-panel" data-vl-step="splits" hidden>
-    <h2 class="vl-h2">4. Mark splits</h2>
-    <p id="vl-split-progress" class="vl-strong">—</p>
-    <div class="vl-nav-row">
-      <button type="button" class="vl-btn-ghost" id="vl-btn-splits-back">Back</button>
-      <button type="button" class="vl-btn-ghost" id="vl-btn-undo-split">Undo last split</button>
-      <button type="button" class="vl-btn-primary" id="vl-btn-mark-split">Mark end of segment here</button>
-    </div>
-  </section>
+      <section class="vl-panel vl-panel--dock" data-vl-step="splits" hidden>
+        <h2 class="vl-h2">4. Mark splits</h2>
+        <p id="vl-split-progress" class="vl-strong">—</p>
+        <div class="vl-nav-row vl-nav-row--split-mark">
+          <button type="button" class="vl-btn-ghost" id="vl-btn-splits-back">Back</button>
+          <button type="button" class="vl-btn-ghost" id="vl-btn-undo-split" title="Remove the last split mark" aria-label="Undo last split">Undo</button>
+          <button type="button" class="vl-btn-primary" id="vl-btn-mark-split" title="Mark end of this segment at the current video time" aria-label="Mark end of segment at current video time">Mark segment</button>
+        </div>
+      </section>
 
-  <section class="vl-panel" data-vl-step="official" hidden>
-    <h2 class="vl-h2">5. Official time (optional)</h2>
-    <p class="vl-copy">If chip or FAT time differs from what you marked at the line, enter it here. <strong>Scale splits</strong> proportionally to that total (recommended for model comparison). <strong>Keep raw</strong> leaves your video segment times unchanged.</p>
-    <div class="vl-row">
-      <label class="vl-label">Official time</label>
-      <input type="text" id="vl-official-time" class="vl-input" placeholder="e.g. 47.12 or 3:42.50">
+      <section class="vl-panel vl-panel--dock" data-vl-step="official" hidden>
+        <h2 class="vl-h2">5. Official time (optional)</h2>
+        <p class="vl-copy vl-copy--compact">If chip or FAT time differs from your line mark, enter it here. <strong>Scale splits</strong> to that total (recommended). <strong>Keep raw</strong> leaves video splits unchanged.</p>
+        <div class="vl-row">
+          <label class="vl-label">Official time</label>
+          <input type="text" id="vl-official-time" class="vl-input vl-input--dock" placeholder="e.g. 47.12 or 3:42.50">
+        </div>
+        <div class="vl-row vl-radio-row vl-radio-row--compact">
+          <label><input type="radio" name="vl-reconcile" id="vl-reconcile-scale" checked> Scale to official total</label>
+          <label><input type="radio" name="vl-reconcile" id="vl-reconcile-raw"> Keep raw splits</label>
+        </div>
+        <div class="vl-row">
+          <label class="vl-label">Label (optional)</label>
+          <input type="text" id="vl-athlete-label" class="vl-input vl-input--dock" placeholder="Name or note">
+        </div>
+        <div class="vl-nav-row vl-nav-row--pair">
+          <button type="button" class="vl-btn-ghost" id="vl-btn-official-back">Back</button>
+          <button type="button" class="vl-btn-primary" id="vl-btn-official-next">Run analysis</button>
+        </div>
+      </section>
     </div>
-    <div class="vl-row vl-radio-row">
-      <label><input type="radio" name="vl-reconcile" id="vl-reconcile-scale" checked> Scale splits to official total</label>
-      <label><input type="radio" name="vl-reconcile" id="vl-reconcile-raw"> Keep raw video splits</label>
-    </div>
-    <div class="vl-row">
-      <label class="vl-label">Label (optional)</label>
-      <input type="text" id="vl-athlete-label" class="vl-input" placeholder="Name or session note">
-    </div>
-    <div class="vl-nav-row">
-      <button type="button" class="vl-btn-ghost" id="vl-btn-official-back">Back</button>
-      <button type="button" class="vl-btn-primary" id="vl-btn-official-next">Run analysis</button>
-    </div>
-  </section>
+  </div>
 
   <section class="vl-panel" data-vl-step="analysis" hidden>
     <h2 class="vl-h2">6. Analysis</h2>
@@ -157,7 +164,7 @@
       </div>
     </div>
     <div id="vl-analysis-table" class="vl-table-wrap"></div>
-    <div class="vl-nav-row" style="flex-wrap:wrap">
+    <div class="vl-nav-row vl-nav-row--exports">
       <button type="button" class="vl-btn-primary" id="vl-btn-share-link">Copy share link</button>
       <button type="button" class="vl-btn-primary" id="vl-btn-export-html">Download athlete report (.html)</button>
       <button type="button" class="vl-btn-primary" id="vl-btn-export-json">Download JSON</button>

@@ -76,9 +76,14 @@ function showStep(name) {
   document.querySelectorAll('[data-vl-step]').forEach(el => {
     el.hidden = el.dataset.vlStep !== name;
   });
-  const pb = $('vl-player-block');
-  if (pb) {
-    pb.hidden = !['gun', 'splits', 'official'].includes(name);
+  const wb = $('vl-workbench');
+  if (wb) {
+    const inReview = ['gun', 'splits', 'official'].includes(name);
+    wb.hidden = !inReview;
+    if (!inReview) {
+      const v = $('vl-video');
+      if (v && !v.paused) v.pause();
+    }
   }
 }
 
