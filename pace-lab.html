@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pace Lab — Data &amp; Event Explorer</title>
+<meta name="description" content="Explore optimal pacing strategies for track events from 100m to 5K. Elite split data, interactive calculators, and data-driven pacing recommendations.">
+<meta property="og:title" content="Pace Lab — Track Event Pacing Analysis">
+<meta property="og:description" content="Optimal pacing strategies for 100m, 200m, 400m, 800m, 1500m, 2 Mile, and 5K. Elite data + interactive calculators.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://pace.alphapeak.io/pace-lab.html">
+<meta property="og:site_name" content="Pace Lab">
+<meta property="og:image" content="https://pace.alphapeak.io/apeak.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="AlphaPeak — Pace Lab">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pace Lab — Track Event Pacing Analysis">
+<meta name="twitter:description" content="Optimal pacing strategies for 100m through 5K. Elite split data + calculators.">
+<meta name="twitter:image" content="https://pace.alphapeak.io/apeak.png">
+<meta name="twitter:image:alt" content="AlphaPeak — Pace Lab">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--surface:#12121a;--surface2:#1a1a26;--surface3:#222233;
+  --border:#2a2a3a;--text:#e8e8f0;--text2:#9999aa;--text3:#666677;
+  --accent:#ff6b35;--accent2:#ff8f60;--accent-dim:rgba(255,107,53,0.12);
+  --blue:#4d9fff;--green:#34d399;--red:#f87171;--yellow:#fbbf24;
+  --font:'Outfit',sans-serif;--mono:'DM Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}
+a:hover{color:var(--accent2)}
+
+.hero{
+  padding:80px 24px 24px;text-align:center;position:relative;overflow:hidden;
+  background:linear-gradient(180deg,#12121a 0%,var(--bg) 100%);
+}
+.hero::before{
+  content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);
+  width:800px;height:800px;
+  background:radial-gradient(circle,rgba(255,107,53,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero h1{
+  font-size:clamp(2.6rem,6vw,4.5rem);font-weight:900;letter-spacing:-0.03em;
+  background:linear-gradient(135deg,#fff 30%,var(--accent) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;position:relative;
+}
+.hero .sub{font-size:1.15rem;color:var(--text2);margin-top:16px;font-weight:300;max-width:700px;margin-inline:auto;line-height:1.7}
+.hero .tag{
+  display:inline-block;margin-top:24px;padding:8px 20px;border-radius:20px;
+  background:var(--accent-dim);color:var(--accent);font-size:0.85rem;font-weight:600;
+  letter-spacing:0.05em;text-transform:uppercase;
+}
+.alphapeak-brand{
+  display:inline-flex;align-items:center;justify-content:center;position:relative;z-index:1;
+  margin-bottom:20px;transition:opacity 0.2s;
+}
+.alphapeak-brand:hover{opacity:0.88}
+.alphapeak-brand:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
+.alphapeak-brand img{display:block;height:40px;width:auto}
+footer .alphapeak-brand{margin-bottom:14px}
+footer .alphapeak-brand img{height:30px}
+
+.lab-back{max-width:1200px;margin:0 auto;padding:0 24px 8px;text-align:left}
+.lab-back a{font-weight:600;font-size:0.9rem}
+
+.section-label{
+  text-align:center;margin:40px 0 32px;
+}
+.section-label h2{font-size:1.4rem;font-weight:700;color:var(--text)}
+.section-label p{color:var(--text2);font-size:0.95rem;margin-top:8px;font-weight:300}
+
+.event-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:20px;max-width:1200px;margin:0 auto;padding:0 24px 60px;
+}
+.event-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:28px;cursor:pointer;transition:all 0.3s;text-decoration:none;color:var(--text);
+  display:block;position:relative;overflow:hidden;
+}
+.event-card:hover{border-color:var(--accent);transform:translateY(-2px);color:var(--text)}
+.event-card::after{
+  content:'';position:absolute;top:0;right:0;width:120px;height:120px;
+  background:radial-gradient(circle at 100% 0%,rgba(255,107,53,0.06) 0%,transparent 70%);
+  pointer-events:none;
+}
+.event-card .event-name{font-size:1.5rem;font-weight:800;letter-spacing:-0.02em}
+.event-card .event-type{font-size:0.75rem;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;margin-top:4px}
+.event-card .event-desc{font-size:0.85rem;color:var(--text2);margin-top:12px;font-weight:300;line-height:1.6}
+.event-card .event-stats{
+  display:flex;gap:16px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);
+}
+.event-card .event-stat{font-size:0.75rem;color:var(--text3)}
+.event-card .event-stat strong{color:var(--text2);font-weight:600}
+
+footer{
+  text-align:center;padding:40px 24px;color:var(--text3);font-size:0.8rem;
+  border-top:1px solid var(--border);margin-top:40px;
+}
+footer a{color:var(--text2)}
+
+@media(max-width:768px){
+  .event-grid{grid-template-columns:1fr;padding:0 16px 40px}
+  .hero{padding:50px 16px 16px}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <a class="alphapeak-brand" href="https://alphapeak.io" target="_blank" rel="noopener noreferrer" aria-label="AlphaPeak — alphapeak.io">
+    <img src="/apeak.png" alt="AlphaPeak" width="160" height="40" decoding="async">
+  </a>
+  <h1>Pace Lab</h1>
+  <p class="sub">Explore optimal pacing strategies for track events from sprints to distance. Elite split data, interactive charts, and data-driven pacing recommendations.</p>
+  <span class="tag">7 Events &middot; 100m to 5K &middot; 1968–2025</span>
+</div>
+
+<div class="lab-back">
+  <a href="/">← Home</a>
+</div>
+
+<div class="section-label">
+  <h2>Choose an Event</h2>
+  <p>Each event features elite split data, interactive charts, and a pacing calculator</p>
+</div>
+
+<div class="event-grid">
+  <a href="/events/100m.html" class="event-card">
+    <div class="event-type">Sprint</div>
+    <div class="event-name">100m</div>
+    <div class="event-desc">Acceleration, peak velocity, and deceleration analysis across 10m segments. Reaction time and wind data included.</div>
+    <div class="event-stats">
+      <div class="event-stat"><strong>17</strong> Men's Races</div>
+      <div class="event-stat"><strong>10</strong> Women's Races</div>
+      <div class="event-stat"><strong>10</strong> Segments</div>
+    </div>
+  </a>
+
+  <a href="/events/200m.html" class="event-card">
+    <div class="event-type">Sprint</div>
+    <div class="event-name">200m</div>
+    <div class="event-desc">Curve vs straight pacing dynamics across 50m segments. Includes wind-adjusted analysis for accurate comparison.</div>
+    <div class="event-stats">
+      <div class="event-stat"><strong>15</strong> Men's Races</div>
+      <div class="event-stat"><strong>9</strong> Women's Races</div>
+      <div class="event-stat"><strong>4</strong> Segments</div>
+    </div>
+  </a>
+
+  <a href="/events/400m.html" class="event-card">
+    <div class="event-type">Sprint / Middle Distance</div>
+    <div class="event-name">400m</div>
+    <div class="event-desc">The definitive 400m pacing resource. 100m split analysis with differential tracking and speed endurance metrics.</div>
+    <div class="event-stats">
+      <div class="event-stat"><strong>39</strong> Men's Races</div>
+      <div class="event-stat"><strong>37</strong> Women's Races</div>
+      <div class="event-stat"><strong>4</strong> Segments</div>
+    </div>
+  </a>
+
+  <a href="/events/800m.html" class="event-card">
+    <div class="event-type">Middle Distance</div>
+    <div class="event-name">800m</div>
+    <div class="event-desc">200m split analysis revealing the balance between aggressive front-running and tactical kick strategies.</div>
+    <div class="event-stats">
+      <div class="event-stat"><strong>13</strong> Men's Races</div>
+      <div class="event-stat"><strong>8</strong> Women's Races</div>
+      <div class="event-stat"><strong>4</strong> Segments</div>
+    </div>
+  </a>
+
+  <a href="/events/1500m.html" class="event-card">
+    <div class="event-type">Middle Distance</div>
+    <div class="event-name">1500m</div>
+    <div class="event-desc">Lap-by-lap pacing with 400m splits plus the critical 300m finishing segment. Includes mile time conversions.</div>
+    <div class="event-stats">
+      <div class="event-stat"><strong>11</strong> Men's Races</div>
+      <div class="event-stat"><strong>8</strong> Women's Races</div>
+      <div class="event-stat"><strong>4</strong> Segments</div>
+    </div>
+  </a>
+
+  <a href="/events/2mile.html" class="event-card">
+    <div class="event-type">Distance</div>
+    <div class="event-name">2 Mile</div>
+    <div class="event-desc">Lap-by-lap pacing across 8 laps. First mile vs second mile differential analysis for race strategy.</div>
+    <div class="event-stats">
+      <div class="event-stat"><strong>8</strong> Men's Races</div>
+      <div class="event-stat"><strong>6</strong> Women's Races</div>
+      <div class="event-stat"><strong>8</strong> Laps</div>
+    </div>
+  </a>
+
+  <a href="/events/5k.html" class="event-card">
+    <div class="event-type">Distance</div>
+    <div class="event-name">5K</div>
+    <div class="event-desc">Per-kilometer pacing analysis with cross-country adjustment factors for terrain and conditions.</div>
+    <div class="event-stats">
+      <div class="event-stat"><strong>11</strong> Men's Races</div>
+      <div class="event-stat"><strong>7</strong> Women's Races</div>
+      <div class="event-stat"><strong>5</strong> Segments</div>
+    </div>
+  </a>
+</div>
+
+<footer>
+  <a class="alphapeak-brand" href="https://alphapeak.io" target="_blank" rel="noopener noreferrer" aria-label="AlphaPeak — alphapeak.io">
+    <img src="/apeak.png" alt="AlphaPeak" width="140" height="35" decoding="async">
+  </a>
+  <p>Pace Lab — Data compiled from <a href="https://www.athletefirst.org/" target="_blank" rel="noopener noreferrer">Athletes First</a>, World Athletics, and academic research.<br>
+  <a href="https://alphapeak.io" target="_blank" rel="noopener noreferrer">alphapeak.io</a> · <a href="/">Home</a></p>
+</footer>
+
+</body>
+</html>

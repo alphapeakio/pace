@@ -1,0 +1,10 @@
+# Cloudflare Workers AI — Pace Lab coach narrative
+# Deploy: npm run coach-worker:deploy
+# Set secrets if needed: wrangler secret put COACH_SHARED_SECRET --config workers/coach/wrangler.toml
+
+name = "pace-coach-ai"
+main = "src/index.js"
+compatibility_date = "2025-03-21"
+
+[ai]
+binding = "AI"

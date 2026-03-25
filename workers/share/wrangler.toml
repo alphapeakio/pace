@@ -1,0 +1,24 @@
+# Video Lab — shareable report links (D1 + Worker).
+# Deploy: npm run share-worker:deploy
+#
+# Routes: same host as Pages (pace.alphapeak.io) so share links are /s/{uuid}.
+# workers.dev URL still works for debugging.
+
+name = "pace-share"
+main = "src/index.js"
+compatibility_date = "2025-03-21"
+workers_dev = true
+
+routes = [
+  { pattern = "pace.alphapeak.io/s/*", zone_name = "alphapeak.io" },
+  { pattern = "pace.alphapeak.io/api/share", zone_name = "alphapeak.io" },
+]
+
+[vars]
+SHARE_PUBLIC_ORIGIN = "https://pace.alphapeak.io"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "pace-share"
+database_id = "79ab59ff-0252-45ab-a241-a2b302d9753a"
+migrations_dir = "migrations"

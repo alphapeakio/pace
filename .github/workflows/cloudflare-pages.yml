@@ -1,0 +1,31 @@
+# Deploy Pace Lab to Cloudflare Pages on push to main.
+# Repo → Settings → Secrets → add CLOUDFLARE_API_TOKEN (Account · Cloudflare Workers · Edit)
+# Optional: CLOUDFLARE_ACCOUNT_ID if wrangler ever requires it in CI.
+
+name: Deploy Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: pages deploy dist --project-name=pace-lab --branch=main

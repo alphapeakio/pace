@@ -1,0 +1,11 @@
+# Cloudflare Pages — custom headers (see https://developers.cloudflare.com/pages/configuration/headers/)
+# CORS: allow cross-origin reads when the requesting origin is the Pace Lab production host.
+# If you also need https://alphapeak.io or www to fetch assets, use a Pages Function or second deployment rule.
+
+/*
+  Access-Control-Allow-Origin: https://pace.alphapeak.io
+  Access-Control-Allow-Methods: GET, HEAD, OPTIONS
+  Access-Control-Allow-Headers: *
+  Access-Control-Max-Age: 86400
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

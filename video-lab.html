@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Lab — Pace Lab</title>
+<meta name="description" content="Mark splits from your race video and compare pacing to elite models. Runs entirely in your browser.">
+<meta property="og:title" content="Video Lab — Pace Lab">
+<meta property="og:description" content="Client-side race video timing and pacing analysis.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://pace.alphapeak.io/video-lab.html">
+<meta property="og:site_name" content="Pace Lab">
+<meta property="og:image" content="https://pace.alphapeak.io/apeak.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="AlphaPeak — Pace Lab">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://pace.alphapeak.io/apeak.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="vl-page-hero">
+  <a class="alphapeak-brand" href="https://alphapeak.io" target="_blank" rel="noopener noreferrer" aria-label="AlphaPeak — alphapeak.io">
+    <img src="/apeak.png" alt="AlphaPeak" width="160" height="40" decoding="async">
+  </a>
+  <h1 class="vl-page-title">Video Lab</h1>
+  <p class="vl-page-lead">Mark splits on your race video, compare to the same reference curves as Pace Lab. Everything runs in your browser.</p>
+</div>
+
+<nav class="nav">
+  <a href="/" style="padding:8px 16px;color:var(--accent);font-weight:600">← Home</a>
+  <span class="nav-divider" aria-hidden="true"></span>
+  <a href="/pace-lab.html" style="padding:8px 16px;color:var(--text2);font-weight:500">Pace Lab (data)</a>
+</nav>
+
+<div class="container video-lab-wrap">
+
+  <div class="vl-player-sticky" id="vl-player-block" hidden>
+    <div class="vl-video-wrap">
+      <video id="vl-video" controls playsinline tabindex="0" class="vl-video"></video>
+    </div>
+    <div class="vl-clock" id="vl-race-clock">—</div>
+    <p class="vl-copy vl-hint" id="vl-clock-hint">Race clock = current video time minus gun. With the video focused, ← → adjusts 0.05s (hold Shift: 0.5s).</p>
+    <div class="vl-missed-option">
+      <label class="vl-missed-check-label">
+        <input type="checkbox" id="vl-missed-enable" class="vl-missed-enable">
+        Recording started late (shift race clock)
+      </label>
+      <div class="vl-missed-details" id="vl-missed-details" hidden>
+        <p class="vl-copy vl-missed-expl">Enter seconds of race already gone at the frame you use as “gun.” Splits from your marks stay the same; only the clock shifts.</p>
+        <label class="vl-label" for="vl-missed-head">Seconds already elapsed at gun frame</label>
+        <input type="number" id="vl-missed-head" class="vl-input vl-missed-input" min="0" step="0.05" value="0" title="Seconds of race already elapsed at your gun frame">
+      </div>
+    </div>
+  </div>
+
+  <section class="vl-panel" data-vl-step="upload">
+    <h2 class="vl-h2">1. Race video</h2>
+    <div class="vl-upload-zone" id="vl-upload-zone" role="button" tabindex="0" aria-label="Add video file">
+      <input type="file" id="vl-file" accept="video/*" class="vl-sr-only" aria-label="Choose video file">
+      <div id="vl-upload-placeholder" class="vl-upload-placeholder">
+        <div class="vl-upload-icon" aria-hidden="true"></div>
+        <p class="vl-upload-title">Add video</p>
+        <p class="vl-upload-line">Drop a file here or click this area</p>
+      </div>
+      <div id="vl-upload-preview" class="vl-upload-preview" hidden>
+        <video id="vl-upload-preview-video" class="vl-upload-preview-video" playsinline controls></video>
+        <button type="button" class="vl-upload-change" id="vl-upload-change">Replace video</button>
+      </div>
+    </div>
+    <p class="vl-copy vl-upload-next">After a file is added, event selection opens automatically.</p>
+  </section>
+
+  <section class="vl-panel" data-vl-step="event" hidden>
+    <h2 class="vl-h2">2. Event &amp; gender</h2>
+    <p class="vl-copy">Segment layout matches the Pace Lab database for this event.</p>
+    <div class="vl-row">
+      <label class="vl-label">Event</label>
+      <select id="vl-event" class="vl-select"></select>
+    </div>
+    <div class="vl-row">
+      <label class="vl-label">Gender</label>
+      <select id="vl-gender" class="vl-select">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+    </div>
+    <div class="vl-nav-row">
+      <button type="button" class="vl-btn-ghost" id="vl-btn-event-back">Back</button>
+      <button type="button" class="vl-btn-primary" id="vl-btn-event-next">Continue</button>
+    </div>
+  </section>
+
+  <section class="vl-panel" data-vl-step="gun" hidden>
+    <h2 class="vl-h2">3. Gun time</h2>
+    <p id="vl-step-hint" class="vl-copy">Scrub to the start signal, pause, then set gun time.</p>
+    <div class="vl-nav-row">
+      <button type="button" class="vl-btn-ghost" id="vl-btn-gun-back">Back</button>
+      <button type="button" class="vl-btn-primary" id="vl-btn-set-gun">Set gun at current time</button>
+    </div>
+  </section>
+
+  <section class="vl-panel" data-vl-step="splits" hidden>
+    <h2 class="vl-h2">4. Mark splits</h2>
+    <p id="vl-split-progress" class="vl-strong">—</p>
+    <div class="vl-nav-row">
+      <button type="button" class="vl-btn-ghost" id="vl-btn-splits-back">Back</button>
+      <button type="button" class="vl-btn-ghost" id="vl-btn-undo-split">Undo last split</button>
+      <button type="button" class="vl-btn-primary" id="vl-btn-mark-split">Mark end of segment here</button>
+    </div>
+  </section>
+
+  <section class="vl-panel" data-vl-step="official" hidden>
+    <h2 class="vl-h2">5. Official time (optional)</h2>
+    <p class="vl-copy">If chip or FAT time differs from what you marked at the line, enter it here. <strong>Scale splits</strong> proportionally to that total (recommended for model comparison). <strong>Keep raw</strong> leaves your video segment times unchanged.</p>
+    <div class="vl-row">
+      <label class="vl-label">Official time</label>
+      <input type="text" id="vl-official-time" class="vl-input" placeholder="e.g. 47.12 or 3:42.50">
+    </div>
+    <div class="vl-row vl-radio-row">
+      <label><input type="radio" name="vl-reconcile" id="vl-reconcile-scale" checked> Scale splits to official total</label>
+      <label><input type="radio" name="vl-reconcile" id="vl-reconcile-raw"> Keep raw video splits</label>
+    </div>
+    <div class="vl-row">
+      <label class="vl-label">Label (optional)</label>
+      <input type="text" id="vl-athlete-label" class="vl-input" placeholder="Name or session note">
+    </div>
+    <div class="vl-nav-row">
+      <button type="button" class="vl-btn-ghost" id="vl-btn-official-back">Back</button>
+      <button type="button" class="vl-btn-primary" id="vl-btn-official-next">Run analysis</button>
+    </div>
+  </section>
+
+  <section class="vl-panel" data-vl-step="analysis" hidden>
+    <h2 class="vl-h2">6. Analysis</h2>
+    <p class="vl-copy">Segment times below are in <strong>seconds</strong>. Exports include the full text breakdown.</p>
+    <p id="vl-anchor-strip" class="vl-anchor-strip mono" aria-label="Your segment times in seconds"></p>
+    <div id="vl-dash-cards" class="vl-dash-cards" aria-live="polite"></div>
+    <div id="vl-projection" class="vl-projection"></div>
+    <div id="vl-coach" class="vl-coach-card">
+      <div class="vl-coach-h">Pacing notes</div>
+      <p id="vl-coach-loading" class="vl-copy" hidden>Preparing notes…</p>
+      <div id="vl-coach-body" class="vl-coach-body"></div>
+    </div>
+    <div id="vl-gap-viz" class="vl-gap-viz" aria-label="Gap vs model by segment"></div>
+    <p class="vl-chart-caption">Segment duration (s): your marks vs reference curve at the chosen finish time.</p>
+    <div class="vl-chart-meter-wrap">
+      <aside class="vl-pace-meter" aria-label="Reference finish time — faster or slower">
+        <span class="vl-pace-hot">Faster</span>
+        <input type="range" id="vl-pace-target" class="vl-pace-target-range" min="0" max="100" value="50" step="1" orient="vertical" aria-valuetext="Reference curve target" title="Faster (top) vs slower (bottom). Your segment times stay fixed; only the dashed reference updates.">
+        <span class="vl-pace-cold">Slower</span>
+        <div id="vl-pace-readout" class="vl-pace-readout"></div>
+      </aside>
+      <div class="vl-chart-wrap vl-chart-wrap--metered">
+        <canvas id="vl-chart" height="320"></canvas>
+      </div>
+    </div>
+    <div id="vl-analysis-table" class="vl-table-wrap"></div>
+    <div class="vl-nav-row" style="flex-wrap:wrap">
+      <button type="button" class="vl-btn-primary" id="vl-btn-share-link">Copy share link</button>
+      <button type="button" class="vl-btn-primary" id="vl-btn-export-html">Download athlete report (.html)</button>
+      <button type="button" class="vl-btn-primary" id="vl-btn-export-json">Download JSON</button>
+      <button type="button" class="vl-btn-primary" id="vl-btn-export-csv">Download CSV</button>
+      <button type="button" class="vl-btn-primary" id="vl-btn-export-txt">Download text summary (.txt)</button>
+      <button type="button" class="vl-btn-ghost" id="vl-btn-analysis-restart">Start over</button>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <a class="alphapeak-brand" href="https://alphapeak.io" target="_blank" rel="noopener noreferrer" aria-label="AlphaPeak — alphapeak.io">
+    <img src="/apeak.png" alt="AlphaPeak" width="140" height="35" decoding="async">
+  </a>
+  <p class="vl-footer-copy">Pace Lab · Video and marks stay on this device · <a href="https://alphapeak.io" target="_blank" rel="noopener noreferrer">alphapeak.io</a> · <a href="/">Home</a></p>
+</footer>
+
+<script type="module">
+import { initVideoLab } from '/src/js/video-lab/app.js';
+initVideoLab();
+</script>
+</body>
+</html>

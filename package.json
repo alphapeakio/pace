@@ -1,9 +1,26 @@
 {
-  "name": "400m-pace-lab",
-  "version": "1.0.0",
-  "description": "Professional 400m split times database & pacing calculator",
+  "name": "pace-lab",
+  "version": "2.0.0",
+  "description": "Multi-event pacing platform — split times database & pacing calculator for track events",
   "scripts": {
-    "dev": "npx serve public"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "extract-data": "node scripts/extract-excel.js",
+    "pages:create": "wrangler pages project create pace-lab --production-branch=main",
+    "pages:deploy": "npm run build && wrangler pages deploy dist --project-name=pace-lab --branch=main --commit-dirty=true",
+    "coach-worker:deploy": "wrangler deploy --config workers/coach/wrangler.toml",
+    "share-worker:dev": "wrangler dev --config workers/share/wrangler.toml",
+    "share-worker:deploy": "wrangler deploy --config workers/share/wrangler.toml",
+    "share-worker:migrate": "wrangler d1 migrations apply pace-share --remote --config workers/share/wrangler.toml"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^6.2.0",
+    "wrangler": "^4.76.0"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.0",
+    "xlsx": "^0.18.5"
+  }
 }

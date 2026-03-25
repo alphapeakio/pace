@@ -1,0 +1,7 @@
+# Cloudflare Pages — Pace Lab
+# Deploy: npm run pages:deploy
+# Custom domain: Dashboard → Workers & Pages → pace-lab → Custom domains → add pace.alphapeak.io
+
+name = "pace-lab"
+compatibility_date = "2025-03-21"
+pages_build_output_dir = "dist"
