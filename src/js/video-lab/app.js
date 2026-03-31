@@ -21,7 +21,16 @@ import { resolveCoachNarrative } from './coach-narrative.js';
 import { createYouVsModelLineChart, updateVideoLabLineChartModel } from '../charts.js';
 import { getPacingModel } from '../pacing-model.js';
 
-const EVENT_IDS = ['100m', '200m', '400m', '800m', '1500m', '2mile', '5k'];
+const EVENT_GROUPS = [
+  {
+    label: 'Individual',
+    events: ['100m', '200m', '400m', '800m', '1500m', '2mile', '5k'],
+  },
+  {
+    label: 'Relay',
+    events: ['4x100m', '4x200m', '4x400m', '4x800m', 'smr', 'dmr', 'shuttle-hurdle'],
+  },
+];
 
 /** @type {null | { T: number; segmentSeconds: number[]; meta: object; unit: string; gender: string; pacingModels: object }} */
 let vlAnalysisCtx = null;
@@ -34,6 +43,13 @@ const LOADERS = {
   '1500m': () => import('../../data/1500m.js'),
   '2mile': () => import('../../data/2mile.js'),
   '5k': () => import('../../data/5k.js'),
+  '4x100m': () => import('../../data/4x100m.js'),
+  '4x200m': () => import('../../data/4x200m.js'),
+  '4x400m': () => import('../../data/4x400m.js'),
+  '4x800m': () => import('../../data/4x800m.js'),
+  'smr': () => import('../../data/smr.js'),
+  'dmr': () => import('../../data/dmr.js'),
+  'shuttle-hurdle': () => import('../../data/shuttle-hurdle.js'),
 };
 
 let session = createEmptySession();
@@ -654,11 +670,22 @@ function onKeyVideo(e) {
 export function initVideoLab() {
   bindEls();
 
-  EVENT_IDS.forEach(id => {
-    const opt = document.createElement('option');
-    opt.value = id;
-    opt.textContent = id.toUpperCase();
-    $('vl-event').appendChild(opt);
+  const DISPLAY_NAMES = {
+    'smr': 'Sprint Medley Relay',
+    'dmr': 'Distance Medley Relay',
+    'shuttle-hurdle': 'Hurdle Shuttle Relay',
+  };
+  const eventSelect = $('vl-event');
+  EVENT_GROUPS.forEach(group => {
+    const optgroup = document.createElement('optgroup');
+    optgroup.label = group.label;
+    group.events.forEach(id => {
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = DISPLAY_NAMES[id] || id.toUpperCase();
+      optgroup.appendChild(opt);
+    });
+    eventSelect.appendChild(optgroup);
   });
 
   els.file.addEventListener('change', onFileChange);
