@@ -95,7 +95,10 @@ export function computePacingUpsideProjection(gaps, totalSeconds) {
     illustrativeMid: mid,
     illustrativeHigh: high,
     /** Plain-language for exports / UI */
-    blurb: `About ${slowSlack.toFixed(2)}s of your race was “slower than the reference” in the segments where you were behind the curve (you were about that much “faster than reference” elsewhere — same finish time). If better pacing recovered part of that without losing your strong parts, a rough band is ~${low.toFixed(2)}–${high.toFixed(2)}s faster. Not guaranteed — video marks are approximate.`,
+    blurb:
+      slowSlack < 0.005
+        ? 'You are already close to the reference curve on every segment — upside from “shape” alone is small.'
+        : `About ${slowSlack.toFixed(2)} s behind the reference on segments where you were slower. If pacing matched the reference better on those parts (without giving up your fast segments), a rough range is ${low.toFixed(2)}–${high.toFixed(2)} s faster. Estimate only; marks are not exact.`,
   };
 }
 
@@ -122,9 +125,9 @@ export function formatAnalysisSummary(result, eventMeta, formatTimeUnit = 'secon
     const p = result.projection;
     lines.push(
       '',
-      'Pacing upside (illustrative vs reference curve):',
-      `  Total “slow vs reference” in positive-gap segments: ${p.slowSlackSeconds.toFixed(3)}s`,
-      `  Rough band if pacing moves closer to reference: ~${p.illustrativeLow.toFixed(2)}–${p.illustrativeHigh.toFixed(2)}s faster (not guaranteed; video marks are approximate).`
+      'Pacing upside (rough):',
+      `  Slow vs ref (sum of positive gaps): ${p.slowSlackSeconds.toFixed(3)} s`,
+      `  Possible gain if shape improves: ~${p.illustrativeLow.toFixed(2)}–${p.illustrativeHigh.toFixed(2)} s (estimate).`
     );
   }
   return lines.join('\n');

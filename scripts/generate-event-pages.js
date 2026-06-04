@@ -216,6 +216,130 @@ const events = [
       <option value="date-desc">Most recent</option>
       <option value="date-asc">Oldest first</option>`,
   },
+  {
+    id: '110mh',
+    name: '110m Hurdles',
+    type: 'Sprint Hurdles',
+    subtitle: 'Touchdown splits from the approach through all 10 hurdles to the finish. Men\'s high hurdles, hurdle by hurdle.',
+    tagline: '25 Men · 1981–2024',
+    defaultTime: 14.00,
+    timeMin: 12.5, timeMax: 18, timeStep: 0.01,
+    timeLabel: 'Target Time (seconds)',
+    storyTitle: '110m Hurdles Pacing',
+    storyContent: `
+      <div class="story-block">
+        <h3>The Approach</h3>
+        <p>The 13.72m to H1 sets up the whole race. Elite hurdlers reach the first barrier in roughly 2.40–2.50s using an 8-step approach. A slow approach — even 0.05s — compounds across the remaining 9 hurdles because stride patterns are locked to the 9.14m inter-hurdle spacing.</p>
+        <div class="story-insight"><p>Aries Merritt's 12.80 WR had a 2.40s touch at H1 and held ~1.00s hurdle units through H5 before any visible slowdown.</p></div>
+      </div>
+      <div class="story-block">
+        <h3>Hurdle Unit Rhythm</h3>
+        <p>The "hurdle unit" — takeoff to next takeoff — is how coaches measure this race. Elite men complete each unit in 0.95–1.05s during the first five hurdles. The three-step pattern between hurdles keeps a tight cadence, and the best hurdlers hold it deep into the race. Slowdown typically starts around H6–H7, with the H9→H10 unit running 8–12% slower than the fastest unit.</p>
+      </div>
+      <div class="story-block">
+        <h3>The Run-In</h3>
+        <p>After H10, there are 14.02m of open sprinting to the line. Elite hurdlers cover it in 1.38–1.45s. Without hurdles to clear, stride length opens up — but this is the end of the race, and fatigue is at its peak. The difference between good and great closers often comes down to how well they hold form through this final segment.</p>
+      </div>`,
+    sortOptions: `
+      <option value="time-asc">Fastest first</option>
+      <option value="time-desc">Slowest first</option>
+      <option value="date-desc">Most recent</option>
+      <option value="date-asc">Oldest first</option>`,
+  },
+  {
+    id: '100mh',
+    name: '100m Hurdles',
+    type: 'Sprint Hurdles',
+    subtitle: 'Touchdown splits from the approach through all 10 hurdles to the finish. Women\'s high hurdles, hurdle by hurdle.',
+    tagline: '25 Women · 1988–2024',
+    defaultTime: 13.50,
+    timeMin: 12.0, timeMax: 17, timeStep: 0.01,
+    timeLabel: 'Target Time (seconds)',
+    storyTitle: '100m Hurdles Pacing',
+    storyContent: `
+      <div class="story-block">
+        <h3>The Approach</h3>
+        <p>The 100mH approach is 13.00m — slightly shorter than the men's 13.72m. Elite women use an 8-step approach and reach H1 in roughly 2.30–2.50s. The 8.50m inter-hurdle spacing (vs 9.14m for men) requires shorter, faster strides in the three-step pattern between barriers.</p>
+        <div class="story-insight"><p>Tobi Amusan's 12.12 WR at the 2022 World Championships in Eugene came from an exceptionally fast approach and sub-1.00s hurdle units through the first half.</p></div>
+      </div>
+      <div class="story-block">
+        <h3>Clearance</h3>
+        <p>Over the 0.838m (33-inch) barriers, elite air time is under 0.310 seconds per hurdle. Takeoff is roughly 2.0m out, landing about 1.0m past. That adds up to ~30m of the 100m race spent in the air. Even small reductions in clearance height translate directly to faster hurdle units.</p>
+      </div>
+      <div class="story-block">
+        <h3>The Run-In</h3>
+        <p>Women have only 10.50m from H10 to the line, compared to 14.02m in the men's race. That makes the last hurdle clearance more important — a choppy H10 costs time with almost no room to recover. The best 100mH runners attack H10 and sprint straight through the finish.</p>
+      </div>`,
+    sortOptions: `
+      <option value="time-asc">Fastest first</option>
+      <option value="time-desc">Slowest first</option>
+      <option value="date-desc">Most recent</option>
+      <option value="date-asc">Oldest first</option>`,
+  },
+  {
+    id: '400mh',
+    name: '400m Hurdles',
+    type: 'Long Hurdles',
+    subtitle: 'Hurdle-by-hurdle splits with step pattern tracking. 10 barriers over a full lap — pacing, rhythm transitions and closing speed.',
+    tagline: '25 Men · 25 Women · 1983–2024',
+    defaultTime: 50.00,
+    timeMin: 45, timeMax: 75, timeStep: 0.01,
+    timeLabel: 'Target Time (seconds)',
+    storyTitle: '400m Hurdles Pacing',
+    storyContent: `
+      <div class="story-block">
+        <h3>Step Patterns</h3>
+        <p>The 400mH is the only hurdle event where athletes change their stride count between hurdles mid-race. Elite men start with 13 steps between barriers and add steps (14, then 15) as fatigue builds. Women typically start at 15 and move to 16–17. When the transition happens — and whether it's smooth — often decides the race.</p>
+        <div class="story-insight"><p>Karsten Warholm's 45.94 WR in Tokyo held 13 steps through H7, then jumped to 15 for the final hurdles. That late transition kept his speed up longer than anyone before him.</p></div>
+      </div>
+      <div class="story-block">
+        <h3>Three Phases</h3>
+        <p>Coaches split the race into three parts: <strong>Drive</strong> (H1–H4, building rhythm), <strong>Maintain</strong> (H4–H7, carrying speed through the turn), and <strong>Survive</strong> (H7–H10, limiting deceleration). Warholm's H8–H10 intervals were only ~12% slower than his H2–H4 units. Most hurdlers lose 20–25% through that same stretch.</p>
+      </div>
+      <div class="story-block">
+        <h3>The Run-In</h3>
+        <p>The 40m from H10 to the line is the longest run-in of any hurdle event, and it comes at the point of maximum fatigue. Sydney McLaughlin-Levrone has consistently closed faster than the field over this stretch — running the final 40m quicker than her competitors even when their splits are similar through H8.</p>
+      </div>`,
+    sortOptions: `
+      <option value="time-asc">Fastest first</option>
+      <option value="time-desc">Slowest first</option>
+      <option value="date-desc">Most recent</option>
+      <option value="date-asc">Oldest first</option>
+      <option value="diff-asc">Smallest differential</option>
+      <option value="diff-desc">Largest differential</option>`,
+  },
+  {
+    id: '300mh',
+    name: '300m Hurdles',
+    type: 'HS Hurdles',
+    subtitle: 'Hurdle-by-hurdle splits for the US high school intermediate hurdle event. 8 hurdles, same spacing as the 400mH.',
+    tagline: '15 Men · 15 Women · 2015–2024',
+    defaultTime: 42.00,
+    timeMin: 34, timeMax: 55, timeStep: 0.01,
+    timeLabel: 'Target Time (seconds)',
+    storyTitle: '300m Hurdles Pacing',
+    storyContent: `
+      <div class="story-block">
+        <h3>Rhythm Over Everything</h3>
+        <p>The 300mH uses the same 45m approach and 35m spacing as the 400mH, but with only 8 hurdles and a 10m finish after H8. Coaches target a consistent stride count throughout — typically 15–17 steps between hurdles for boys, 17–19 for girls. Unlike the 400mH, the best 300mH races don't require a step-count transition. One rhythm, start to finish.</p>
+        <div class="story-insight"><p>Max Nilsson's 34.83 national record (2024) was the first sub-35 in prep history. He held his rhythm through H6–H8, where most HS hurdlers start to break down.</p></div>
+      </div>
+      <div class="story-block">
+        <h3>The 10m Finish</h3>
+        <p>Only 10m separates H8 from the line — the shortest run-in of any hurdle event, roughly 1.1–1.7 seconds. There's no time to recover from a bad last clearance. Coaches teach athletes to attack H8 and sprint straight through.</p>
+      </div>
+      <div class="story-block">
+        <h3>Pipeline to the 400mH</h3>
+        <p>The 300mH is where most 400mH athletes start. The pacing habits carry over directly — holding rhythm, staying aggressive out of the blocks, not decelerating early. Sydney McLaughlin set the girls' national record (38.90) as a high schooler before going on to break the 400mH world record multiple times.</p>
+      </div>`,
+    sortOptions: `
+      <option value="time-asc">Fastest first</option>
+      <option value="time-desc">Slowest first</option>
+      <option value="date-desc">Most recent</option>
+      <option value="date-asc">Oldest first</option>
+      <option value="diff-asc">Smallest differential</option>
+      <option value="diff-desc">Largest differential</option>`,
+  },
 ];
 
 function generateEventPage(event) {

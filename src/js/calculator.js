@@ -16,7 +16,10 @@ import { formatTime, fmt, velocity, parseTime } from './utils.js';
  * @param {Object} params.config - event-specific calculator config
  */
 export function initCalculator({ eventMeta, pacingModels, menData, womenData, config }) {
-  let currentGender = 'male';
+  // Auto-detect gender for single-gender events (e.g. 100mH women-only, 110mH men-only)
+  const hasMale = pacingModels?.male?.length > 0 || menData?.length > 0;
+  const hasFemale = pacingModels?.female?.length > 0 || womenData?.length > 0;
+  let currentGender = (!hasMale && hasFemale) ? 'female' : 'male';
 
   const els = {
     gm: document.getElementById('gm'),
@@ -65,7 +68,7 @@ export function initCalculator({ eventMeta, pacingModels, menData, womenData, co
             <span>${formatTime(s, 'seconds')}s${velStr}</span>
           </div>
           <div class="bar-track">
-            <div class="bar-fill seg-${i % 10}" style="width:${barPct}%">${pcts[i].toFixed(1)}%</div>
+            <div class="bar-fill seg-${i % 12}" style="width:${barPct}%">${pcts[i].toFixed(1)}%</div>
           </div>
         </div>`;
     });
@@ -154,6 +157,10 @@ export function initCalculator({ eventMeta, pacingModels, menData, womenData, co
   els.gf.addEventListener('click', () => setGender('female'));
   els.targetTime.addEventListener('input', calculate);
   if (els.targetMMSS) els.targetMMSS.addEventListener('input', parseMMSS);
+
+  // Set initial gender button state (handles single-gender events)
+  els.gm.classList.toggle('active', currentGender === 'male');
+  els.gf.classList.toggle('active', currentGender === 'female');
 
   // Initial calculation
   calculate();

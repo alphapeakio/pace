@@ -8,8 +8,8 @@ Copy everything below the line into a Claude Code session on your M4 Pro MacBook
 
 I have a project called "400m Pace Lab" — a static website with a 400m split times database and pacing calculator. The source files are ready. I need you to:
 
-1. **Create the project at `~/400m-pace-lab/`** with the files I'll provide
-2. **Create a public GitHub repo** at `alphapeakio/400m-pace-lab`
+1. I have created a github repo at alphpapeakio/pace
+2. This site is currently for just the 400 m. 
 3. **Deploy to Cloudflare Pages** as a static site
 
 Here's what to do step by step:

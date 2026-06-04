@@ -16,7 +16,7 @@ export function renderModelCards(containerId, models, segments, timeUnit = 'seco
   if (!container || !models) return;
 
   container.innerHTML = models.map(m => {
-    const gridCols = Math.min(segments.length, 6);
+    const gridCols = Math.min(segments.length, 11);
     const splitsHtml = m.pcts.map((p, i) => {
       if (i >= segments.length) return '';
       return `<div class="split">

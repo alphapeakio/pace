@@ -11,6 +11,35 @@ function escapeHtml(s) {
     .replace(/"/g, '&quot;');
 }
 
+/** gap = your split seconds − reference split seconds (same convention as result.gaps). */
+const GAP_CONVENTION =
+  'Each gap is (your segment time in seconds) minus (reference segment time at the same finish speed). Positive = you were slower in that segment (longer time). Negative = you were faster (shorter time).';
+
+/**
+ * Top N segments by |gap| with explicit faster/slower for coach copy (avoids LLM sign errors).
+ * @param {Array<{ segment: string, gap: number }>} gaps
+ * @param {number} n
+ */
+function coachTopGapsByMagnitude(gaps, n = 2) {
+  const EPS = 0.005;
+  return [...gaps]
+    .map(g => {
+      const gap = g.gap;
+      let athleteWas;
+      if (gap > EPS) athleteWas = 'slower_than_reference';
+      else if (gap < -EPS) athleteWas = 'faster_than_reference';
+      else athleteWas = 'about_even_with_reference';
+      return {
+        segment: g.segment,
+        gapYouMinusModelSeconds: Number(gap.toFixed(4)),
+        athleteWas,
+        magnitudeSeconds: Number(Math.abs(gap).toFixed(4)),
+      };
+    })
+    .sort((a, b) => b.magnitudeSeconds - a.magnitudeSeconds)
+    .slice(0, n);
+}
+
 /**
  * Full structured context for Workers AI / other coach endpoints (Pace Lab section data).
  */
@@ -38,6 +67,8 @@ export function buildPaceLabCoachContext(result, eventMeta, athleteLabel, gender
 
   return {
     app: 'Pace Lab — Video / pace upload',
+    gapConvention: GAP_CONVENTION,
+    coachTopGapsByMagnitude: coachTopGapsByMagnitude(result.gaps, 2),
     event: {
       name: eventMeta.name,
       totalDistanceM: eventMeta.distance,
@@ -81,21 +112,27 @@ export function buildHeuristicCoachNarrative(result, eventMeta, athleteLabel, ge
   const t = result.total.toFixed(2);
   const tier = result.model.level;
   const sorted = [...result.gaps].sort((a, b) => Math.abs(b.gap) - Math.abs(a.gap));
-  const top = sorted[0];
+  const notable = sorted.filter(g => Math.abs(g.gap) > 0.02);
   const p = result.projection;
 
-  const p1 = `${name} — ${ev} (${genderLabel}). Finish time from your marks is about ${t} seconds. The orange line on the chart is you; the dashed line is the reference curve for that same speed (${tier}). It is a shape guide, not a score.`;
+  const p1 = `${name}, ${ev} (${genderLabel}): ~${t} s total. Model tier at that time: ${tier}. Chart: solid = you, dashed = reference shape at the same finish speed.`;
 
-  let p2 =
-    top && Math.abs(top.gap) > 0.02
-      ? `The biggest gap is ${top.segment}: you were about ${Math.abs(top.gap).toFixed(2)} seconds ${top.gap > 0 ? 'slower' : 'faster'} than the reference there.`
-      : `Your splits are already very close to the reference in every segment.`;
+  const fmtGap = g =>
+    `${g.segment}: about ${Math.abs(g.gap).toFixed(2)} s ${g.gap > 0 ? 'slower' : 'faster'} than reference`;
+  let p2;
+  if (notable.length === 0) {
+    p2 = 'Splits are close to the reference in every segment.';
+  } else if (notable.length === 1) {
+    p2 = `Largest deviation: ${fmtGap(notable[0])}.`;
+  } else {
+    p2 = `Largest deviations vs reference: ${fmtGap(notable[0])}; ${fmtGap(notable[1])}.`;
+  }
 
   let p3 = '';
   if (p && p.slowSlackSeconds >= 0.005) {
-    p3 = `Rough upside if pacing hugged the reference better on the slow parts (without losing your fast parts): on the order of ${p.illustrativeLow.toFixed(2)} to ${p.illustrativeHigh.toFixed(2)} seconds faster. That is only an estimate from these marks, not a promise.`;
+    p3 = `Rough upside if slow segments matched the reference better: ~${p.illustrativeLow.toFixed(2)}–${p.illustrativeHigh.toFixed(2)} s. Estimate only.`;
   } else {
-    p3 = 'There is little “slow vs reference” left in the splits — the next gains are more about fitness and race execution than small shape fixes.';
+    p3 = 'Little room left vs the reference on shape — focus on fitness and execution.';
   }
 
   return [p1, p2, p3].join('\n\n');
@@ -130,7 +167,7 @@ async function fetchOpenAIViaDevProxy(context) {
           {
             role: 'system',
             content:
-              'You are a track coach. Use simple words. Exactly 3 short paragraphs, separated by blank lines. No markdown. Mention numbers from the JSON. Say estimates are uncertain.',
+              'You are a track coach. Be direct and short: exactly 3 brief paragraphs, blank line between. No filler or pep talk, no markdown. Use numbers from the JSON. Gaps: positive gapYouMinusModelSeconds = athlete slower in that segment; negative = faster. For paragraph 2, use coachTopGapsByMagnitude and respect athleteWas (faster_than_reference vs slower_than_reference) — never call a faster segment slower. One sentence on upside if present; say estimate only.',
           },
           {
             role: 'user',
